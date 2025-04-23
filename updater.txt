@@ -1,8 +1,9 @@
 "Updater" {
   "Information" {
     "Version" {
-      "Latest"	"0.0.2"
+      "Latest"	"0.0.3"
     }
+    "Notes" "Print Message to server"
     "Notes" "Added Updater"
     "Notes"	"Favourite Connections implemented"
   }

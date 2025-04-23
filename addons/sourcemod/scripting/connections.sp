@@ -9,7 +9,7 @@
 
 #define UPDATE_URL "https://raw.githubusercontent.com/issari-tf/Connections/main/updater.txt"
 
-#define PLUGIN_VERSION "0.0.2"
+#define PLUGIN_VERSION "0.0.3"
 
 ConVar gCV_Enable;
 ConVar gCV_AutoUpdate;
