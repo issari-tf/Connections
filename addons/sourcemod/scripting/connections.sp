@@ -106,6 +106,11 @@ void CheckClientConnectionMethod(int client)
   {
     if (StrEqual(connectMethod, "serverbrowser_favorites"))
     {
+      // Print to server console
+      char name[MAX_NAME_LENGTH];
+      GetClientName(client, name, sizeof(name));
+      PrintToServer("[FavoriteConnections] %N connected via Favorites.", client);
+
       Action result = Plugin_Continue;
       Call_StartForward(gForward_ClientConnectedViaFavorites);
       Call_PushCell(client);
