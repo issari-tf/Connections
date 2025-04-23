@@ -9,8 +9,8 @@
   }
   
   "Files" {
-    "Plugin"	"Path_SM/addons/sourcemod/plugins/connections.smx"
+    "Plugin"	"Path_SM/plugins/connections.smx"
     
-    "Source"	"Path_SM/addons/sourcemod/scripting/connections.sp"
+    "Source"	"Path_SM/scripting/connections.sp"
   }
 }
