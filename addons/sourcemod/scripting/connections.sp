@@ -11,6 +11,10 @@
 
 #define PLUGIN_VERSION "0.0.4"
 
+#define TEXT_LIME   "\x0733FF57"  // Lime Green color code
+#define TEXT_ORANGE "\x07FFA500"  // Orange color code
+#define TEXT_BLUE   "\x07ADD8E6"  // Light blue color code
+
 ConVar gCV_Enable;
 ConVar gCV_AutoUpdate;
 
@@ -73,8 +77,33 @@ public void OnClientConnected(int iClient) {
     {
       char sName[MAX_NAME_LENGTH];
       GetClientName(iClient, sName, sizeof(sName));
-      PrintToServer("[Connections] %N connected via Favorites.", iClient);
-      PrintToChatAll("[Connections] %N connected via Favorites.", iClient);
+      PrintToChatAll("%s %N %sJoined the server via his/her %sFavourites!", TEXT_LIME, iClient, TEXT_ORANGE, TEXT_BLUE);
     }
   }
+}
+
+
+public Action WelcomeMsg(Handle hTimer, int iClient)
+{
+  char sConnectMethod[32];
+  if (GetClientInfo(iClient, "cl_connectmethod", sConnectMethod, sizeof(sConnectMethod)))
+  {
+    if (!StrEqual(sConnectMethod, "serverbrowser_favorites")) {
+      PrintToChat(iClient, "%sThank you %s%N %sfor Playing on %sLessari.TF!", TEXT_ORANGE, TEXT_LIME, iClient, TEXT_ORANGE, TEXT_BLUE);
+      PrintToChat(iClient, "%sDon't Forget to %sFavourite %sthe server!", TEXT_ORANGE, TEXT_LIME, TEXT_ORANGE);
+    }
+    else 
+    {
+      PrintToChat(iClient, "%sGreat to see you again %s%N", TEXT_ORANGE, TEXT_LIME, iClient);
+    }
+  }
+  return Plugin_Continue;
+}
+
+public void OnClientPutInServer(int iClient) 
+{
+  if (IsFakeClient(iClient) || !gCV_Enable.BoolValue)
+    return;
+
+  CreateTimer(10.0, WelcomeMsg, iClient);
 }
