@@ -9,12 +9,10 @@
 
 #define UPDATE_URL "https://raw.githubusercontent.com/issari-tf/Connections/main/updater.txt"
 
-#define PLUGIN_VERSION "0.0.3"
+#define PLUGIN_VERSION "0.0.4"
 
 ConVar gCV_Enable;
 ConVar gCV_AutoUpdate;
-
-GlobalForward gForward_ClientConnectedViaFavorites;
 
 public Plugin myinfo = 
 {
@@ -25,40 +23,13 @@ public Plugin myinfo =
   url         = ""
 };
 
-public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max)
-{
-  char game[32];
-  GetGameFolderName(game, sizeof(game));
-
-  if (!StrEqual(game, "tf") && !StrEqual(game, "tf_beta") &&
-      !StrEqual(game, "dod") && !StrEqual(game, "hl2mp") &&
-      !StrEqual(game, "css"))
-  {
-    Format(error, err_max, "This plugin only works for TF2, TF2Beta, DoD:S, CS:S and HL2:DM.");
-    return APLRes_Failure;
-  }
-
-  RegPluginLibrary("favorite_connections");
-  return APLRes_Success;
-}
-
 public void OnPluginStart()
 {
-  gForward_ClientConnectedViaFavorites = CreateGlobalForward("ClientConnectedViaFavorites", ET_Event, Param_Cell);
-
   CreateConVar("favoriteconnections_version", PLUGIN_VERSION, "Favorite Connections Version", 
     FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_UNLOGGED | FCVAR_DONTRECORD | FCVAR_REPLICATED | FCVAR_NOTIFY);
 
   gCV_Enable = CreateConVar("connections_enable", "1", "Enable the plugin? 1 = Enable, 0 = Disable", FCVAR_NOTIFY);
   gCV_AutoUpdate = CreateConVar("connections_auto_update", "1", "automatically update when newest versions are available. Does nothing if updater plugin isn't used.", FCVAR_NONE, true, 0.0, true, 1.0);
-
-  for (int i = 1; i <= MaxClients; i++)
-  {
-    if (IsClientInGame(i) && !IsFakeClient(i))
-    {
-      CheckClientConnectionMethod(i);
-    }
-  }
 }
 
 public void OnLibraryAdded(const char[] name) {
@@ -91,30 +62,19 @@ public void Updater_OnPluginUpdated()  {
 }
 #endif
 
-public void OnClientPostAdminCheck(int client)
-{
-  if (!gCV_Enable.BoolValue)
+public void OnClientConnected(int iClient) {
+  if (IsFakeClient(iClient) || !gCV_Enable.BoolValue)
     return;
-
-  CheckClientConnectionMethod(client);
-}
-
-void CheckClientConnectionMethod(int client)
-{
-  char connectMethod[32];
-  if (GetClientInfo(client, "cl_connectmethod", connectMethod, sizeof(connectMethod)))
+  
+  char sConnectMethod[32];
+  if (GetClientInfo(iClient, "cl_connectmethod", sConnectMethod, sizeof(sConnectMethod)))
   {
-    if (StrEqual(connectMethod, "serverbrowser_favorites"))
+    if (StrEqual(sConnectMethod, "serverbrowser_favorites"))
     {
-      // Print to server console
-      char name[MAX_NAME_LENGTH];
-      GetClientName(client, name, sizeof(name));
-      PrintToServer("[FavoriteConnections] %N connected via Favorites.", client);
-
-      Action result = Plugin_Continue;
-      Call_StartForward(gForward_ClientConnectedViaFavorites);
-      Call_PushCell(client);
-      Call_Finish(result);
+      char sName[MAX_NAME_LENGTH];
+      GetClientName(iClient, sName, sizeof(sName));
+      PrintToServer("[Connections] %N connected via Favorites.", iClient);
+      PrintToChatAll("[Connections] %N connected via Favorites.", iClient);
     }
   }
 }
