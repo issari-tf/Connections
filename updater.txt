@@ -1,0 +1,14 @@
+"Updater" {
+  "Information" {
+    "Version" {
+      "Latest"	"0.0.1"
+    }
+    "Notes"	"Favourite Connections implemented"
+  }
+  
+  "Files" {
+    "Plugin"	"Path_SM/plugins/connections.smx"
+    
+    "Source"	"Path_SM/scripting/connections.sp"
+  }
+}
